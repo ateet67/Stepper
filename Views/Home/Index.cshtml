@@ -1,0 +1,112 @@
+﻿@model List<Stepper.Models.question>
+@{
+    ViewBag.Title = "About";
+}
+
+
+<div class="container">
+    <div class="row ">
+        <div class="col-lg-12">
+
+            <div class="stepperMain">
+                <ul class="steplist">
+                    @for (var j = 0; j < Model.Count(); j++)
+                    {
+
+                        if (Model[j].isAnswered && Model[j].selectedOption == Model[j].answer)
+                        {
+                            <li>
+                                <i class="bi bi-check2-circle"></i>
+                            </li>
+                        }
+                        if (Model[j].isAnswered && Model[j].selectedOption != Model[j].answer)
+                        {
+                            <li>
+                                <i class="bi bi-x-circle"></i>
+                            </li>
+                        }
+                        if (Model[j].isAnswered == false)
+                        {
+                            <li>
+                                @(j + 1)
+                            </li>
+                        }
+                    }
+                </ul>
+                <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" aria-label="Success example" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            @*foreach (var ques in Model)
+                {
+                    <h5> @ques.que   <b>@ques.isAnswered</b> </h5>
+                    for (var i = 0; i < ques.options.Count(); i++)
+                    {
+                        @Html.RadioButtonFor(x => ques.answer, ques.options[i].value)
+                    }
+                    <input value="@ques.isAnswered" checked="@ques.isAnswered" type="checkbox" class="options" />
+
+                }*@
+            <div class="tab-content clearfix">
+                <a href="#1" data-toggle="tab" style="opacity: 0;z-index:9999">Overview</a>
+                @for (var j = 0; j < Model.Count(); j++)
+                {
+                    <div class="tab-pane" id="@Model[j].id">
+                        <div class="card">
+                            @using (Html.BeginForm("OnAnswer", "Home", FormMethod.Get))
+                            {
+                                @Html.AntiForgeryToken();
+                                <a href="#@(Model[j].id + 1)" style="opacity:0" data-toggle="tab">Overview</a>
+                                <input type="hidden" value="@Model[j].id" name="Id" />
+                                <h5> @Model[j].que</h5>
+
+                                if (Model[j].isAnswered && Model[j].selectedOption == Model[j].answer)
+                                {
+                                    <p class="text-success"> right</p>
+                                }
+                                if (Model[j].isAnswered && Model[j].selectedOption != Model[j].answer)
+                                {
+                                    <p class="text-danger"> wrong</p>
+                                }
+
+                                for (var i = 0; i < Model[j].options.Count(); i++)
+                                {
+                                    <label>@Model[j].options[i].text</label>
+                                    @Html.RadioButton("selectedOption", Model[j].options[i].value, new { @class = "fdfdf", @id = @i + "selectedOption" + @j, @checked = @Model[j].options[i].value == Model[j].selectedOption })
+                                    @Html.ValidationMessage("selectedOption");
+
+
+
+
+                                    var falg = Model[j].options[i].value == Model[j].selectedOption;
+                                    if (falg)
+                                    {
+                                        <script>
+                            $(@i + "selectedOption" + @j).click();
+                                        </script>
+                                    }
+
+
+
+                                }
+                                if (j < Model.Count() - 1)
+                                {
+                                    <input type="submit" value="Next" style="display: block" />
+                                }
+
+
+                                if (j >= 1)
+                                {
+                                    <button>
+                                        <a href="#@(Model[j].id - 1)" data-toggle="tab" class="btn-block">Prev</a>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
